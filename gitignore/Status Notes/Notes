@@ -1,0 +1,24 @@
+#.07/01/2026
+
+1️⃣ login.html
+
+Styled simply, matching the Story Studio theme.
+
+Form has name="username" and name="password" so Express can read req.body.
+
+Form uses method="POST" and action="/login".
+
+Login button is type="submit".
+
+Looks like a news card / clean page instead of just a bare form.
+
+2️⃣ signup.html
+
+Same style as login page.
+
+Form posts to /signup.
+
+Inputs have name attributes.
+
+Clean page, fits the Story Studio theme.
+

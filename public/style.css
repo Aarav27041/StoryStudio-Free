@@ -1,0 +1,116 @@
+body{
+  margin:0;
+  background:linear-gradient(135deg,#0f0f0f,#1b1b1b);
+  color:white;
+  font-family:"Segoe UI",sans-serif;
+}
+
+.bro-card{
+  max-width:450px;
+  margin:50px auto;
+  padding:30px;
+  background:#121212;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.7);
+}
+
+input{
+  width:80%;
+  padding:12px;
+  margin:12px 0;
+  border-radius:10px;
+  border:none;
+}
+
+button{
+  padding:12px 20px;
+  border-radius:10px;
+  border:none;
+  background:linear-gradient(135deg,#ff4ecd,#7f5bff);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(127,91,255,0.4);
+}
+
+.upload-box{
+  border:2px dashed #333;
+  border-radius:14px;
+  padding:30px 15px;
+  cursor:pointer;
+  margin:20px 0;
+}
+
+.upload-box:hover{
+  border-color:#ff4ecd;
+  background:rgba(255,78,205,0.05);
+}
+
+.upload-box input{display:none;}
+.upload-text{color:#ddd; font-size:15px;}
+.upload-text span{color:#ff4ecd; font-weight:600;}
+
+.latest, .scroll{
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  justify-content:center;
+  padding:20px;
+  overflow-x:auto;
+}
+
+.latest video, .scroll video{
+  max-height:180px;
+  border-radius:12px;
+}
+
+footer{
+  background:#111;
+  padding:20px;
+  text-align:center;
+  color:#aaa;
+}
+
+.bro-title{
+  text-align:center;
+  margin:20px 0 0 0;
+}
+.bro-footer {
+  background:#111;
+  padding:25px 20px;
+  text-align:center;
+  color:#aaa;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.bro-footer p {
+  margin:10px 0 0 0;
+  font-size:12px;
+  color:#777;
+}
+
+.footer-btn {
+  display:inline-block;
+  margin:0 8px;
+  padding:8px 14px;
+  border-radius:12px;
+  background:#222;
+  color:#fff;
+  text-decoration:none;
+  font-size:14px;
+  transition:0.25s;
+}
+
+.footer-btn:hover {
+  background:linear-gradient(135deg,#ff4ecd,#7f5bff);
+  color:white;
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(127,91,255,0.4);
+}

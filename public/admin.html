@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel • Story Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+body {
+  margin:0;
+  font-family:'Orbitron', sans-serif;
+  background: radial-gradient(circle at top, #1b1b2f, #0b0b12);
+  color:#eaeaea;
+}
+.header {
+  padding: 30px;
+  text-align:center;
+  background: linear-gradient(to right,#5a7cff,#ff77c9);
+}
+.header h1 { margin:0; font-size:36px; }
+.container {
+  max-width:900px;
+  margin:30px auto;
+  background: rgba(0,0,0,0.55);
+  border-radius:25px;
+  padding:40px;
+}
+.container h2 { color:#ffcc00; text-align:center; }
+input[type=file] {
+  display:block;
+  margin:20px auto;
+  padding:10px;
+  border-radius:15px;
+}
+button.upload-btn {
+  display:block;
+  margin:0 auto 20px;
+  padding:12px 25px;
+  border:none;
+  border-radius:20px;
+  background: linear-gradient(to right,#5a7cff,#ff77c9);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+.video-box {
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+  justify-content:center;
+  margin-top:20px;
+}
+.video-box iframe {
+  border-radius:12px;
+}
+.admin-video {
+  background: rgba(0,0,0,0.5);
+  padding:10px;
+  border-radius:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.admin-video button {
+  background:#ff4e4e;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.logout {
+  display:block;
+  text-align:center;
+  margin-top:30px;
+  color:#ffcc00;
+  font-weight:bold;
+  text-decoration:none;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Admin Dashboard</h1>
+</div>
+
+<div class="container">
+
+  <h2>Upload Video</h2>
+  <form action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="video" required>
+    <button class="upload-btn" type="submit">Upload</button>
+  </form>
+
+  <h2>Latest Video</h2>
+  <div id="latest-video" style="text-align:center;"></div>
+
+  <h2>More Videos</h2>
+  <div id="video-list" class="video-box"></div>
+
+  <h2>Manage Videos</h2>
+  <div id="video-admin-list"></div>
+
+  <a class="logout" href="/admin-logout">Logout</a>
+
+</div>
+
+<script>
+async function loadVideos() {
+  try{
+    const res = await fetch("/videos");
+    const videos = await res.json();
+
+    // Latest video
+    const latestDiv = document.getElementById("latest-video");
+    if(videos.length>0){
+      latestDiv.innerHTML = `<iframe src="/uploads/${videos[0]}" width="90%" height="350" frameborder="0" allowfullscreen></iframe>`;
+    } else latestDiv.innerHTML = "<p>No videos yet bro 😎</p>";
+
+    // Scrollable list
+    const listDiv = document.getElementById("video-list");
+    listDiv.innerHTML="";
+    for(let i=1;i<videos.length;i++){
+      const iframe = document.createElement("iframe");
+      iframe.src=`/uploads/${videos[i]}`;
+      iframe.width="300";
+      iframe.height="180";
+      iframe.frameBorder="0";
+      iframe.allowFullscreen=true;
+      listDiv.appendChild(iframe);
+    }
+
+    // Admin delete list
+    const adminDiv = document.getElementById("video-admin-list");
+    adminDiv.innerHTML="";
+    videos.forEach(video=>{
+      const div = document.createElement("div");
+      div.className="admin-video";
+      div.innerHTML=`<span>${video}</span><button>Delete</button>`;
+      const btn = div.querySelector("button");
+      btn.addEventListener("click", async ()=>{
+        const confirmDelete = confirm("Are you sure you want to delete this video bro? 😎");
+        if(!confirmDelete) return;
+        const res = await fetch("/delete-video",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({filename:video})
+        });
+        if(res.ok){
+          alert("Deleted ✅");
+          loadVideos();
+        } else alert("Error deleting 😭");
+      });
+      adminDiv.appendChild(div);
+    });
+
+  }catch(err){console.error(err);}
+}
+
+// Load videos on page load
+loadVideos();
+</script>
+
+</body>
+</html>

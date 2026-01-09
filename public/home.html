@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Story Studio - Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<style>
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(to right, #5a7cff, #ff77c9);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+header {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+}
+
+header img {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+}
+
+/* Logout button */
+.logout-btn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  background: rgba(0,0,0,0.3);
+  padding: 8px 15px;
+  border-radius: 25px;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(0,0,0,0.6);
+}
+
+/* Search bar */
+#searchBar {
+  width: 60%;
+  max-width: 400px;
+  padding: 10px 15px;
+  font-size:16px;
+  border-radius:25px;
+  border:none;
+  margin: 20px auto;
+  display: block;
+}
+
+/* Section titles */
+h2 {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Videos container */
+.video-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  flex: 1;
+}
+
+/* Individual video card */
+.video-card {
+  background: rgba(0,0,0,0.3);
+  border-radius: 15px;
+  padding: 10px;
+  text-align: center;
+  width: 90%;
+  max-width: 600px;
+}
+
+.video-card video {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* Scrollable more videos */
+.video-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.video-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.video-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.4);
+  border-radius: 4px;
+}
+
+/* Footer */
+footer {
+  background: #111;
+  color: #ccc;
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+footer a {
+  color: #ffcc00;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+footer a:hover {
+  color: #fff;
+}
+</style>
+</head>
+
+<!-- FEEDBACK POPUP -->
+<div id="feedbackPopup" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  z-index:9999;
+  justify-content:center;
+  align-items:center;
+">
+
+  <div style="
+    background:#111;
+    color:white;
+    padding:35px;
+    border-radius:25px;
+    width:90%;
+    max-width:420px;
+    text-align:center;
+    box-shadow:0 0 40px rgba(0,0,0,0.8);
+  ">
+
+    <h2 style="margin-top:0; color:#ffcc00;">We value your feedback 💬</h2>
+    <p style="opacity:0.9;">
+      Enjoying Story Studio?<br>
+      Tell us what you think!
+    </p>
+
+    <div style="margin-top:25px;">
+      <a href="/feedback.html" style="
+        display:inline-block;
+        padding:12px 25px;
+        background:linear-gradient(to right,#ffcc00,#ff9f00);
+        color:black;
+        border-radius:25px;
+        text-decoration:none;
+        font-weight:bold;
+        margin-right:10px;
+      ">Give Feedback</a>
+
+      <button onclick="closeFeedback()" style="
+        padding:12px 20px;
+        border-radius:25px;
+        border:none;
+        background:#333;
+        color:white;
+        cursor:pointer;
+      ">Later</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // show popup after 5 minutes (300000 ms)
+  if (!localStorage.getItem("feedbackShown")) {
+    setTimeout(() => {
+      document.getElementById("feedbackPopup").style.display = "flex";
+      localStorage.setItem("feedbackShown", "true");
+    }, 300000);
+  }
+
+  function closeFeedback() {
+    document.getElementById("feedbackPopup").style.display = "none";
+  }
+</script>
+
+<body>
+
+<a href="logout.html" class="logout-btn">Logout</a>
+
+<header>
+  <img src="untitled design (1).jpg" alt="Story Studio Banner">
+  <h1>Welcome to The Story Studio 😄</h1>
+</header>
+
+<!-- Search bar -->
+<input type="text" id="searchBar" placeholder="Search videos...">
+
+<h2 style="text-align:center; color:white; margin-top:30px;">THE LATEST OF ALL!</h2>
+
+<div id="latest-video" style="text-align:center; margin-top:20px;"></div>
+
+<h2 style="text-align:center; color:white; margin-top:40px;">MORE VIDEOS</h2>
+<div id="video-list" style="display:flex; overflow-x:auto; gap:20px; padding:20px;"></div>
+
+<script>
+async function loadVideos() {
+  try {
+    const response = await fetch("/videos");
+    const videos = await response.json();
+
+    const latestDiv = document.getElementById("latest-video");
+    const listDiv = document.getElementById("video-list");
+
+    if (videos.length === 0) {
+      latestDiv.innerHTML = "<p style='color:white;'>No videos uploaded yet 😎</p>";
+      return;
+    }
+
+    // Show latest video at top
+    latestDiv.innerHTML = `
+      <iframe src="/uploads/${videos[0]}" 
+              width="90%" max-width="800px" height="350px" 
+              style="border-radius:15px;" frameborder="0" allowfullscreen>
+      </iframe>
+    `;
+
+    // Scrollable list for the rest
+    listDiv.innerHTML = "";
+    for (let i = 1; i < videos.length; i++) {
+      const iframe = document.createElement("iframe");
+      iframe.src = `/uploads/${videos[i]}`;
+      iframe.width = "300";
+      iframe.height = "180";
+      iframe.style.borderRadius = "12px";
+      iframe.style.flex = "0 0 auto";
+      iframe.frameBorder = "0";
+      iframe.allowFullscreen = true;
+      listDiv.appendChild(iframe);
+    }
+
+  } catch (err) {
+    console.error("Error loading videos:", err);
+  }
+}
+
+loadVideos();
+</script>
+
+<footer>
+  <p>© 2026 Story Studio | All rights reserved.</p>
+  <p>
+    <a href="/about.html">About</a> |
+    <a href="/contact.html">Contact</a> |
+    <a href="/privacy.html">Privacy Policy</a>
+  </p>
+</footer>
+
+<script>
+let allVideos = [];
+
+async function loadVideos() {
+  const res = await fetch("/api/videos");
+  const videos = await res.json();
+  allVideos = videos;
+  displayVideos(videos);
+}
+
+function displayVideos(videos) {
+  const latestContainer = document.getElementById("latestVideo");
+  const moreContainer = document.getElementById("moreVideos");
+
+  latestContainer.innerHTML = "";
+  moreContainer.innerHTML = "";
+
+  if (videos.length > 0) {
+    // Latest video
+    const latest = videos[0];
+    latestContainer.innerHTML = `
+      <h3>${latest.title}</h3>
+      <video controls src="${latest.url}"></video>
+    `;
+
+    // Other videos
+    for (let i = 1; i < videos.length; i++) {
+      const v = videos[i];
+      const div = document.createElement("div");
+      div.className = "video-card";
+      div.innerHTML = `
+        <h3>${v.title}</h3>
+        <video controls src="${v.url}"></video>
+      `;
+      moreContainer.appendChild(div);
+    }
+  } else {
+    latestContainer.innerHTML = "<p>No videos yet.</p>";
+  }
+}
+
+// Filter videos based on search
+document.getElementById("searchBar").addEventListener("input", (e) => {
+  const query = e.target.value.toLowerCase();
+  const filtered = allVideos.filter(v => v.title.toLowerCase().includes(query));
+  displayVideos(filtered);
+});
+
+loadVideos();
+</script>
+</body>
+</html>

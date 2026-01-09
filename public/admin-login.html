@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Login • Story Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+body {
+  margin:0;
+  font-family:'Orbitron', sans-serif;
+  background: radial-gradient(circle at top, #1b1b2f, #0b0b12);
+  color:#eaeaea;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+/* Login Box */
+.login-box {
+  background: rgba(0,0,0,0.65);
+  padding: 50px 40px;
+  border-radius:25px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  text-align:center;
+  width: 350px;
+}
+
+.login-box h1 {
+  font-size:36px;
+  margin-bottom:20px;
+  color:#ffcc00;
+}
+
+.login-box input {
+  width:90%;
+  padding:12px;
+  margin:12px 0;
+  border-radius:15px;
+  border:none;
+  font-size:16px;
+}
+
+.login-box button {
+  padding:12px 25px;
+  margin-top:15px;
+  border-radius:20px;
+  background: linear-gradient(to right,#5a7cff,#ff77c9);
+  color:white;
+  font-weight:bold;
+  font-size:16px;
+  border:none;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.login-box button:hover {
+  transform: scale(1.05);
+  box-shadow:0 8px 25px rgba(127,91,255,0.5);
+}
+
+.error-msg {
+  color:#ff4e4e;
+  margin-top:10px;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="login-box">
+  <h1>Admin Login</h1>
+  <form id="loginForm" action="/admin-login" method="POST">
+    <input type="text" name="username" placeholder="Enter username" required>
+    <input type="password" name="password" placeholder="Enter password" required>
+    <button type="submit">Login</button>
+  </form>
+  <div class="error-msg" id="error-msg"></div>
+</div>
+
+<script>
+// Frontend check: make sure username/password are filled
+const form = document.getElementById("loginForm");
+const errorMsg = document.getElementById("error-msg");
+
+form.addEventListener("submit", function(e){
+  const username = form.username.value.trim();
+  const password = form.password.value.trim();
+  if(!username){
+    e.preventDefault();
+    errorMsg.textContent = "Please enter your username bro 😎";
+    return;
+  }
+  if(!password){
+    e.preventDefault();
+    errorMsg.textContent = "Please enter your password bro 😎";
+    return;
+  }
+});
+</script>
+
+</body>
+</html>
